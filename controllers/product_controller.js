@@ -1,4 +1,4 @@
-const { Product } = require('../models');
+const { Product, Sequelize } = require('../models');
 
 class ProductController {
     static async create(req, res) {
@@ -18,34 +18,48 @@ class ProductController {
 
     static async getAll(req, res) {
         try {
-            const page = parseInt(req.query.page) || 1;
-            const limit = parseInt(req.query.limit) || 10;
-            const offset = (page - 1) * limit;
+          const page = parseInt(req.query.page) || 1;
+          const limit = parseInt(req.query.limit) || 10;
+          const offset = (page - 1) * limit;
+          const { q } = req.query;
+    
+          let whereClause = {
+            discarded_at: null
+          };
+    
+          if (q) {
+            whereClause.name = {
+              [Sequelize.Op.iLike]: `%${q}%`
+            };
+            console.log(q)
+          }
+    
+          const { count, rows } = await Product.findAndCountAll({
+            where: whereClause,
+            limit: limit,
+            offset: offset,
+            order: q ? [['name', 'ASC']] : [['id', 'ASC']]
+          });
 
-            const { count, rows } = await Product.findAndCountAll({
-                where: {
-                    discarded_at: null
-                },
-                limit: limit,
-                offset: offset,
-                order: [['id', 'ASC']]
-            });
-
-            const totalPages = Math.ceil(count / limit);
-
-            res.status(200).json({
-                data: rows,
-                meta: {
-                    totalItems: count,
-                    itemsPerPage: limit,
-                    currentPage: page,
-                    totalPages: totalPages
-                }
-            });
+          console.log(count)
+          console.log(rows)
+    
+          const totalPages = Math.ceil(count / limit);
+    
+          res.status(200).json({
+            data: rows,
+            meta: {
+              totalItems: count,
+              itemsPerPage: limit,
+              currentPage: page,
+              totalPages: totalPages,
+              isSearch: !!q
+            }
+          });
         } catch (e) {
-            res.status(500).json({ message: e.message });
+          res.status(500).json({ message: e.message });
         }
-    }
+      }
 
     static async getOne(req, res) {
         try {

@@ -64,21 +64,51 @@ docker-compose exec db psql -U postgres -d widatech_db
 
 The API provides endpoints for managing products and invoices. All endpoints are prefixed with `/api`.
 
-### Products
+# Products
 
-Base URL: `http://localhost:8080/api/product`
+Base URL: `http://localhost:8080/api/products`
+
+## Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET    | `/`      | Get all products |
+| GET    | `/`      | Get all products or search products |
 | GET    | `/:id`   | Get a product by ID |
 | POST   | `/`      | Create a new product |
 | PUT    | `/:id`   | Update a product by ID |
 | DELETE | `/:id`   | Delete a product by ID |
 
+## Get all products or search products
+
+```
+GET http://localhost:8080/api/products
+```
+
+This endpoint now supports both retrieving all products and searching for products based on their name.
+
+### Query Parameters
+
+| Parameter | Type    | Description |
+|-----------|---------|-------------|
+| page      | integer | Page number for pagination (default: 1) |
+| limit     | integer | Number of items per page (default: 10) |
+| q         | string  | Search query for product names |
+
+### Examples
+
+1. Get all products (paginated):
+   ```
+   GET http://localhost:8080/api/products?page=1&limit=10
+   ```
+
+2. Search for products:
+   ```
+   GET http://localhost:8080/api/products?q=laptop&page=1&limit=10
+   ```
+
 ### Invoices
 
-Base URL: `http://localhost:8080/api/invoice`
+Base URL: `http://localhost:8080/api/invoices`
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -88,18 +118,11 @@ Base URL: `http://localhost:8080/api/invoice`
 | PUT    | `/:id`   | Update an invoice by ID |
 | DELETE | `/:id`   | Delete an invoice by ID |
 
-### Example Requests
-
-#### Get all products
-
-```
-GET http://localhost:8080/api/product
-```
-
+### Example Requests for Post
 #### Create a new product
 
 ```
-POST http://localhost:8080/api/product
+POST http://localhost:8080/api/products
 Content-Type: application/json
 
 {
@@ -113,7 +136,7 @@ Content-Type: application/json
 #### Create a new invoice
 
 ```
-POST http://localhost:8080/api/invoice
+POST http://localhost:8080/api/invoices
 Content-Type: application/json
 
 {
