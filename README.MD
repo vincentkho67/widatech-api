@@ -60,6 +60,80 @@ To access the PostgreSQL database directly, you can use:
 docker-compose exec db psql -U postgres -d widatech_db
 ```
 
+## API Documentation
+
+The API provides endpoints for managing products and invoices. All endpoints are prefixed with `/api`.
+
+### Products
+
+Base URL: `http://localhost:8080/api/product`
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET    | `/`      | Get all products |
+| GET    | `/:id`   | Get a product by ID |
+| POST   | `/`      | Create a new product |
+| PUT    | `/:id`   | Update a product by ID |
+| DELETE | `/:id`   | Delete a product by ID |
+
+### Invoices
+
+Base URL: `http://localhost:8080/api/invoice`
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET    | `/`      | Get all invoices |
+| GET    | `/:id`   | Get an invoice by ID |
+| POST   | `/`      | Create a new invoice |
+| PUT    | `/:id`   | Update an invoice by ID |
+| DELETE | `/:id`   | Delete an invoice by ID |
+
+### Example Requests
+
+#### Get all products
+
+```
+GET http://localhost:8080/api/product
+```
+
+#### Create a new product
+
+```
+POST http://localhost:8080/api/product
+Content-Type: application/json
+
+{
+  "name": "Example Product",
+  "picture_url": "https://example.com/product-image.jpg",
+  "stock": 100,
+  "price": 19.99
+}
+```
+
+#### Create a new invoice
+
+```
+POST http://localhost:8080/api/invoice
+Content-Type: application/json
+
+{
+  "customer": "John Doe",
+  "salesperson": "Jane Smith",
+  "payment_type": "CREDIT",
+  "notes": "First purchase",
+  "details": [
+    {
+      "quantity": 2,
+      "product_id": 1
+    },
+    {
+      "quantity": 1,
+      "product_id": 2
+    }
+  ]
+}
+```
+
 ## Built With
 
 - Node.js
