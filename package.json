@@ -1,0 +1,26 @@
+{
+  "name": "widatech-api",
+  "version": "1.0.0",
+  "description": "Full Stack Engineer - Technical Challenge Background Internet of Things revolves heavily on adept software integration. Software integration includes developing a dashboard system for admin to have a good overview of the system, receiving, and posting data to the device, up to controlling the device connected. Candidate will be measured over these parameters: 1) Ability to produce great code quality and technical knowledge 2) Ability to gather, compile and conclude information as part of requirement gathering 3) Ability to present complex technical information to presentable dashboard in layman term Technical Challenge Details Develop a React-based Web App for an invoice module feature of a Point of Sales System. Candidate should expect to allocate 6-8 Hours for the test. The page consists of three sections. The first and second section should take 3-5 hours, while section three may take up to 3 hours. Case / Story line WidaTech has been contacted by a client to help develop a function to enhance the overall business experience. The client has previously talked with a pre-sales engineer and technology consultant from WidaTech. Based on the conversation, the details below are drafted and passed to the technical development team. The candidate as the developer in WidaTech is expected to work on the following functionalities: 1. Section 1 - Add invoice with autocomplete for product input  Mandatory invoice data are date, customer name, salesperson name, notes (optional), and multiple products sold.  Autocomplete product suggestions as the user types. Each product suggestion should include product name, product picture, stock, and the price of the product (product data can be hard coded in JSON format)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "db:setup": "npx sequelize-cli db:create && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
+    "docker:start": "npm run db:setup && npm start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "pg": "^8.13.0",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.5",
+    "sequelize-cli": "^6.6.2"
+  }
+}
