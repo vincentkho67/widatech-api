@@ -71,12 +71,10 @@ class InvoiceController {
                 where: { id, discarded_at: null },
                 include: [{
                     model: InvoiceDetail,
-                    as: 'details',
                     where: { discarded_at: null },
                     required: false,
                     include: [{
-                        model: Product,
-                        as: 'product'
+                        model: Product
                     }]
                 }]
             });
