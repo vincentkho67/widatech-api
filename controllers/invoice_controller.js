@@ -4,30 +4,42 @@ const { sequelize } = require('../models');
 class InvoiceController {
     static async create(req, res) {
         const t = await sequelize.transaction();
-
         try {
             const { customer, salesperson, payment_type, notes, details } = req.body;
             
+            if (!Array.isArray(details) || details.length === 0) {
+                throw new Error('Bad request. Please provide valid invoice details');
+            }
+            
+            const invalidDetails = details.some(detail => 
+                !detail.product_id || 
+                !detail.quantity || 
+                typeof detail.quantity !== 'number' || 
+                detail.quantity <= 0
+            );
+            
+            if (invalidDetails) {
+                throw new Error('Bad request. Each detail must have a valid product_id and a positive quantity');
+            }
+           
             const newInvoice = await Invoice.create({
                 customer,
                 salesperson,
                 payment_type,
                 notes
             }, { transaction: t });
-
-            if (details && details.length > 0) {
-                const invoiceDetails = details.map(detail => ({
-                    ...detail,
-                    invoice_id: newInvoice.id
-                }));
-                await InvoiceDetail.bulkCreate(invoiceDetails, { transaction: t });
-            }
-
+    
+            const invoiceDetails = details.map(detail => ({
+                ...detail,
+                invoice_id: newInvoice.id
+            }));
+            await InvoiceDetail.bulkCreate(invoiceDetails, { transaction: t });
+    
             await t.commit();
             res.status(201).json(newInvoice);
         } catch (e) {
             await t.rollback();
-            res.status(500).json({ message: e.message });
+            res.status(400).json({ message: e.message });
         }
     }
 
