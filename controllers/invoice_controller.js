@@ -76,6 +76,24 @@ class InvoiceController {
         }
     }
 
+    static async getAllWithoutPagination(req, res) {
+        try {
+          const invoices = await Invoice.findAll({
+            where: { discarded_at: null },
+            order: [['createdAt', 'ASC']],
+            include: [{ 
+              model: InvoiceDetail, 
+              where: { discarded_at: null }, 
+              required: false,
+              include: [{ model: Product }]
+            }]
+          });
+          res.status(200).json(invoices);
+        } catch (e) {
+          res.status(500).json({ message: e.message });
+        }
+    }
+
     static async getOne(req, res) {
         try {
             const { id } = req.params;

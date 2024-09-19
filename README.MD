@@ -112,7 +112,8 @@ Base URL: `http://localhost:8080/api/invoices`
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET    | `/`      | Get all invoices |
+| GET    | `/`      | Get all invoices with pagination|
+| GET    | `/all`   | Get all invoices without pagination|
 | GET    | `/:id`   | Get an invoice by ID |
 | POST   | `/`      | Create a new invoice |
 | PUT    | `/:id`   | Update an invoice by ID |
