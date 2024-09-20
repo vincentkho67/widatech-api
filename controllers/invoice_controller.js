@@ -54,7 +54,7 @@ class InvoiceController {
                 where: { discarded_at: null },
                 limit,
                 offset,
-                order: [['id', 'ASC']],
+                order: [['createdAt', 'DESC']],
                 include: [{
                     model: InvoiceDetail,
                     where: { discarded_at: null },
@@ -81,7 +81,7 @@ class InvoiceController {
         try {
           const invoices = await Invoice.findAll({
             where: { discarded_at: null },
-            order: [['createdAt', 'ASC']],
+            order: [['createdAt', 'DESC']],
             include: [{ 
               model: InvoiceDetail, 
               where: { discarded_at: null }, 

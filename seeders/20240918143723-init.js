@@ -32,9 +32,12 @@ module.exports = {
     const paymentTypes = ['CREDIT', 'CASH', 'NOTCASHORCREDIT'];
 
     const today = new Date();
+    const invoices = [];
+
+    // Create 50 invoices
     for (let i = 0; i < 50; i++) {
-      const invoiceDate = subDays(today, getRandomInt(0, 60));
-      const invoice = await queryInterface.bulkInsert('Invoices', [{
+      const invoiceDate = subDays(today, getRandomInt(0, 60)); // Random date within the last 60 days
+      const invoice = {
         customer: customers[getRandomInt(0, customers.length - 1)],
         salesperson: salespeople[getRandomInt(0, salespeople.length - 1)],
         payment_type: paymentTypes[getRandomInt(0, paymentTypes.length - 1)],
@@ -42,20 +45,32 @@ module.exports = {
         createdAt: invoiceDate,
         updatedAt: invoiceDate,
         discarded_at: null
-      }], { returning: true });
+      };
+      invoices.push(invoice);
+    }
 
+    // Bulk insert all invoices
+    const createdInvoices = await queryInterface.bulkInsert('Invoices', invoices, { returning: true });
+
+    // Create invoice details
+    const invoiceDetails = [];
+
+    createdInvoices.forEach((invoice) => {
       const detailCount = getRandomInt(1, 5);
       for (let j = 0; j < detailCount; j++) {
-        await queryInterface.bulkInsert('InvoiceDetails', [{
+        invoiceDetails.push({
           quantity: getRandomInt(1, 10),
-          invoice_id: invoice[0].id,
+          invoice_id: invoice.id,
           product_id: products[getRandomInt(0, products.length - 1)].id,
-          createdAt: invoiceDate,
-          updatedAt: invoiceDate,
+          createdAt: invoice.createdAt, // Use the same date as the invoice
+          updatedAt: invoice.createdAt,
           discarded_at: null
-        }]);
+        });
       }
-    }
+    });
+
+    // Bulk insert all invoice details
+    await queryInterface.bulkInsert('InvoiceDetails', invoiceDetails);
   },
 
   async down (queryInterface, Sequelize) {
