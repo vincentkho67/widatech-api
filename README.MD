@@ -114,10 +114,18 @@ Base URL: `http://localhost:8080/api/invoices`
 |--------|----------|-------------|
 | GET    | `/`      | Get all invoices with pagination|
 | GET    | `/all`   | Get all invoices without pagination|
+| GET    | `/bySpecificDate`| Get all invoices by dates|
 | GET    | `/:id`   | Get an invoice by ID |
 | POST   | `/`      | Create a new invoice |
 | PUT    | `/:id`   | Update an invoice by ID |
 | DELETE | `/:id`   | Delete an invoice by ID |
+
+| Parameter | Type    | Description |
+|-----------|---------|-------------|
+| page      | integer | Page number for pagination (default: 1) |
+| limit     | integer | Number of items per page (default: 10) |
+| date      | string  | ex ('2024-08-09')                      |
+| timeRange | string  | enum (daily, weekly, monthly)          |
 
 ### Example Requests for Post
 #### Create a new product
