@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const { Invoice, InvoiceDetail, Product } = require('../models');
 const { sequelize } = require('../models');
 
@@ -189,6 +190,70 @@ class InvoiceController {
         } catch (e) {
             await t.rollback();
             res.status(500).json({ message: e.message });
+        }
+    }
+
+    static async getBySpecificDate(req, res) {
+        try {
+          const { date, timeRange } = req.query;
+          
+          if (!date) {
+            return res.status(400).json({ message: 'Date parameter is required' });
+          }
+    
+          let startDate, endDate;
+          switch (timeRange) {
+            case 'daily':
+              startDate = new Date(date);
+              endDate = new Date(new Date(date).setHours(23, 59, 59, 999));
+              break;
+            case 'weekly':
+              startDate = new Date(date);
+              startDate.setDate(startDate.getDate() - startDate.getDay());
+              endDate = new Date(startDate);
+              endDate.setDate(endDate.getDate() + 6);
+              endDate.setHours(23, 59, 59, 999);
+              break;
+            case 'monthly':
+              startDate = new Date(date);
+              startDate.setDate(1);
+              endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0, 23, 59, 59, 999);
+              break;
+            default:
+              startDate = new Date(date);
+              endDate = new Date(new Date(date).setHours(23, 59, 59, 999));
+          }
+    
+          const invoices = await Invoice.findAll({
+            where: {
+              createdAt: {
+                [Op.between]: [startDate, endDate]
+              },
+              discarded_at: null
+            },
+            include: [{
+              model: InvoiceDetail,
+              include: [{
+                model: Product,
+              }]
+            }]
+          });
+    
+          const revenue = invoices.reduce((total, invoice) => {
+            return total + invoice.InvoiceDetails.reduce((invoiceTotal, detail) => {
+              return invoiceTotal + (detail.quantity * detail.Product.price);
+            }, 0);
+          }, 0);
+    
+          res.status(200).json({
+            data: [{
+              date: date,
+              revenue: revenue
+            }]
+          });
+        } catch (e) {
+          console.error(e);
+          res.status(500).json({ message: e.message });
         }
     }
 }
